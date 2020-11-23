@@ -24,11 +24,11 @@ class nGram (nGramFile: String, sep: String = " ") {
 
     fun fitnessScore(text: String): Double {
         var score = 0.0
-        for (i in 0..text.length - nGramLength + 1)
+        for (i in 0..text.length - nGramLength)
         if (nGramMap.containsKey(text.substring(i, i + nGramLength))) {
-            score = nGramMap[text.substring(i, i + nGramLength)]!!
+            score += nGramMap[text.substring(i, i + nGramLength)]!!
         } else {
-            score = floorProbability
+            score += floorProbability
         }
         return score
     }

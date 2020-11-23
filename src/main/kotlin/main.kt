@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
 
     val triGram = nGram("english_trigrams.txt")
     val quadGram = nGram("english_quadgrams.txt")
-    val cypherText = "kiqpbkxspshwehospzqhoinlgapp"
+    val cypherText = "bqnnmsbumizadyqighrr"
     val recordLenght = 100
 
     for (keyLength in 3..20) {
@@ -13,16 +13,14 @@ fun main(args: Array<String>) {
         var record = mutableListOf<Triple<Double, String, String>>()
 
         for (i in "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toMutableList().permutations(3)) {
-            val key = i.joinToString(separator = "")
+            val key = i.joinToString(separator = "") + "A".repeat(keyLength - i.size)
             val text = vigenere(cypherText, key, false)
             var fitness = 0.0
-            for (j in 0..text.length step keyLength) {
-                if (text.length - j < 3)
-                    fitness += 0
-                else
+            for (j in 0..text.length) {
+                if (text.length - j > 3)
                     fitness += triGram.fitnessScore(text.substring(j, j + 3))
             }
-            record.add(Triple(fitness, key, text))
+            record.add(Triple(fitness, i.joinToString(separator = ""), text))
             record.sortByDescending { triple -> triple.first }
             if (record.size > recordLenght) {
                 record = record.subList(0, recordLenght)
@@ -30,16 +28,16 @@ fun main(args: Array<String>) {
         }
 
         var nextRecord = mutableListOf<Triple<Double, String, String>>()
-        for (i in 0..(keyLength - 3)) {
+        for (i in 0..(keyLength - 4)) {
             for (k in 0..99) {
                 for (c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
                     val key = record[k].second + c
-                    //val fullKey = key + "A" * (keyLength - key.length)
-                    val text = vigenere(cypherText, key, false)
+                    val fullKey = key + "A".repeat(keyLength - key.length)
+                    val text = vigenere(cypherText, fullKey, false)
                     var fitness = 0.0
-                    for (j in 0..text.length step keyLength) {
-                        if (text.length - j < 4)
-                            fitness += quadGram.fitnessScore(text.substring(j, j + key.length))
+                    for (j in 0..text.length) {
+                        if (text.length - j > 4)
+                            fitness += quadGram.fitnessScore(text.substring(j, j + 4))
                     }
                     nextRecord.add(Triple(fitness, key, text))
                     nextRecord.sortByDescending { triple -> triple.first }
@@ -65,16 +63,9 @@ fun main(args: Array<String>) {
                 bestScore = score
             }
         }
-        /*var bestScore = 0.0
-        for (j in 0..decyText.length step keyLength) {
-            if (decyText.length - j < 4)
-                bestScore += 0
-            else
-                bestScore += quadGram.fitnessScore(decyText.substring(j, j + 4))
-        }*/
 
 
-        println("$bestScore, key: $keyLength $bestKey, $decyText")
+        println("$bestScore, key: $keyLength $bestKey, ${vigenere(cypherText, bestKey, false)}")
 
     }
 
@@ -82,7 +73,7 @@ fun main(args: Array<String>) {
 }
 
 fun vigenere(text: String, key: String, encrypt: Boolean = true): String {
-    val t = if (encrypt) text.toUpperCase() else text.toUpperCase()
+    val t = text.toUpperCase()
     val sb = StringBuilder()
     var ki = 0
     for (c in t) {
