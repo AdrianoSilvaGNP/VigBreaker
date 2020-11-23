@@ -12,6 +12,7 @@ repositories {
 }
 dependencies {
     testImplementation(kotlin("test-junit"))
+    implementation("com.github.shiguruikai:combinatoricskt:1.6.0")
 }
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "1.8"
