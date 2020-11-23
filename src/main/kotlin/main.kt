@@ -30,7 +30,7 @@ fun main(args: Array<String>) {
         }
 
         var nextRecord = mutableListOf<Triple<Double, String, String>>()
-        for (i in 1..keyLength - 3) {
+        for (i in 0..(keyLength - 3)) {
             for (k in 0..99) {
                 for (c in "ABCDEFGHIJKLMNOPQRSTUVWXYZ") {
                     val key = record[k].second + c
@@ -39,9 +39,7 @@ fun main(args: Array<String>) {
                     var fitness = 0.0
                     for (j in 0..text.length step keyLength) {
                         if (text.length - j < 4)
-                            fitness += 0
-                        else
-                            fitness += quadGram.fitnessScore(text.substring(j, j + 4))
+                            fitness += quadGram.fitnessScore(text.substring(j, j + key.length))
                     }
                     nextRecord.add(Triple(fitness, key, text))
                     nextRecord.sortByDescending { triple -> triple.first }
@@ -56,15 +54,24 @@ fun main(args: Array<String>) {
 
 
 
-        val bestKey = record[0].second
+        var bestKey = record[0].second
         val decyText = vigenere(cypherText, bestKey, false)
-        var bestScore = 0.0
+        var bestScore = quadGram.fitnessScore(decyText)
+        for (i in 0..99) {
+            val text = vigenere(cypherText, record[i].second, false)
+            val score = quadGram.fitnessScore(text)
+            if (score > bestScore) {
+                bestKey = record[i].second
+                bestScore = score
+            }
+        }
+        /*var bestScore = 0.0
         for (j in 0..decyText.length step keyLength) {
             if (decyText.length - j < 4)
                 bestScore += 0
             else
                 bestScore += quadGram.fitnessScore(decyText.substring(j, j + 4))
-        }
+        }*/
 
 
         println("$bestScore, key: $keyLength $bestKey, $decyText")
