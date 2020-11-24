@@ -21,9 +21,9 @@ fun main() {
     val chosenNGram = quadGram
 
     // length of kept records (decreasing improves performance but lowers precision/success rate)
-    val recordLenght = 1000
+    val recordLenght = 100
 
-    for (keyLength in 52..52) {
+    for (keyLength in 3..20) {
         // create record list (each record holds score, key and cleartext)
         var record = mutableListOf<Triple<Double, String, String>>()
 
@@ -56,9 +56,9 @@ fun main() {
                     val fitness = chosenNGram.fitnessScore(text)
 
                     nextRecord.add(Triple(fitness, key, text))
-                    nextRecord.sortByDescending { triple -> triple.first }
+                    nextRecord.sortByDescending { triple -> triple.first } // sort by lowest score -> closer to 0 is better
                     if (nextRecord.size > recordLenght) {
-                        nextRecord = nextRecord.subList(0, recordLenght)
+                        nextRecord = nextRecord.subList(0, recordLenght) // keep defined record length
                     }
                 }
             }
