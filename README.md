@@ -1,3 +1,8 @@
 # VigBreaker
 
-An implementation of Vigenere cipher breakes using nGram analysis
+An implementation of a Vigenere cipher breaker using N-Gram analysis + bruteforce
+
+# References
+
+  - https://www.guballa.de/implementierung-eines-vigenere-solvers
+  - http://practicalcryptography.com/cryptanalysis/text-characterisation/quadgrams/
